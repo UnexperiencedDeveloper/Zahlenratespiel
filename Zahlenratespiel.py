@@ -1,5 +1,5 @@
 # Dies ist ein Simples Spiel in Python. Der Spieler muss eine zufällig generierte Zahl erraten.
-# Tim Matzenauer, 28.01.2019
+# 28.01.2019
 # Version 0.01
 
 
@@ -14,7 +14,7 @@ Anzahl versuche festlegen, sklaierend nach Level                    CHECK
 from random import randint  # Importieren der Funktion Randint
 
 
-def main():  # Alle 'Globalen' Variablen werden beim Start des Programms gesetzt
+def main():  # Level des Spielers wird beim Start des Programms gesetzt
     level = 1
     print("")
     print("Wilkommen im Spiel!")
@@ -56,9 +56,9 @@ def menue(level):
 
 
 def spiel_starten(level):
-    anzahl_versuche = 1  # Reseten der Anzahl der Versuche des Spielers, Standard ist 1
+    anzahl_versuche = 1  # Reseten der Anzahl der Versuche des Spielers auf Standard(1)
 
-    bereich = level * 10
+    bereich = level * 10 
     zielzahl: int = randint(1, bereich)
     print("Neues Spiel beginnt, errate eine Zahl von 1 bis ", bereich)
 
@@ -81,10 +81,11 @@ def spiel_starten(level):
         if tipp == zielzahl:
             print("LEVEL UP, Du hast die richtige Zahl ({0}) erraten!".format(zielzahl))
 
-            if anzahl_versuche == 1:
+            if anzahl_versuche == 1: # IF-Abfrage für besseres Wording
                 print("Du hast {0} versuch gebraucht!".format(anzahl_versuche))
             else:
                 print("Du hast {0} versuche gebraucht!".format(anzahl_versuche))
+                
             neues_level = level + 1
             menue(neues_level)  # Zurück zum Menü, neues Level wird als Argument übergeben
             break
