@@ -4,7 +4,7 @@ from random import randint
 # Was ist neu?
 # -> Zeitbegrenzung ab Level 10, skalierend mit Level
 # -> begrenzte Versuche ab Level 10, skalierend mit Level
-#
+
 
 
 def main(): # Das Spiel wird in der main() gestartet und führt nach beendigung zu menue() zurück
