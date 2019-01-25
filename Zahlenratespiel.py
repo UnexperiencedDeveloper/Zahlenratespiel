@@ -1,111 +1,135 @@
-# Dies ist ein Simples Spiel in Python. Der Spieler muss eine zufällig generierte Zahl erraten.
-# Tim Matzenauer, 28.01.2019
-# Version 0.01
+import time
+from random import randint
+
+# Was ist neu?
+# -> Zeitbegrenzung ab Level 10, skalierend mit Level
+# -> begrenzte Versuche ab Level 10, skalierend mit Level
+#
 
 
-### IDEEN ###
-"""
-Spieler muss in bestimmter Zeit erraten, skalierend nach Level      CHECK
-Anzahl versuche festlegen, sklaierend nach Level                    CHECK
+def main(): # Das Spiel wird in der main() gestartet und führt nach beendigung zu menue() zurück
 
-"""
-#############
+    level = 1  # Spielerlevel, standardmäßiger Start bei 1
 
-from random import randint  # Importieren der Funktion Randint
+   ###### Begrüßungstext ######
 
-
-def main():  # Alle 'Globalen' Variablen werden beim Start des Programms gesetzt
-    level = 1
     print("")
     print("Wilkommen im Spiel!")
     print("")
-    print("Du musst in diesem Spiel eine Zufallsgenerierte Zahl erraten")
-    print("Sobald Du die korrekte Zahl erraten hast, steigt Dein Level und der Zufallsbereich vergrößert sich\n")
-    menue(level)
+    print("In diesem Spiel musst Du eine Zufallsgenerierte Zahl erraten.")
+    print("Der Zahlenbereich ist abhängig von deinem Level, welches mit der Zeit steigt.")
+    print("Apropos Zeit! Ab einem bestimmten Level wird die Zeit begrenzt sein und deine Versuche!")
+    print("Sobald Du die korrekte Zahl erraten hast, vergrößert sich der Zahlenbereich\n\n")
+
+   ###### Begrüßungstext ######
+
+    menue(level) # Zu beginn wird das Menü aufgerufen
 
 
-def menue(level):
-    # Menü anzeigen
-    print("(N)eues Spiel")
-    print("(L)evel ändern")
-    print("(B)eenden")
-    print("------------")
-    print("Dein aktuelles Level: ",level, "\n")
-
-    while True:
-        try:
-            aktion = input("Wie soll es weiter gehen?: ")
-
-            if aktion == "N" or aktion == "n":
-                # Prüfen der Eingabe auf Neues Spiel
-                # Neues Spiel starten
-                spiel_starten(level)
-                break
-            elif aktion == "L" or aktion == "l":
-                # Level ändern
-                level = level_aendern()
-            elif aktion == "B" or aktion == "b":
-                # Spiel beenden
-                print("Auf wiedersehen :)")
-                break
-            else:
-                print("Falsche Eingabe")
-        except ValueError:
-            print("Falsche Eingabe")
-            continue
+# über die main() wird spiele_enginge() aufgerufen
 
 
-def spiel_starten(level):
-    anzahl_versuche = 1  # Reseten der Anzahl der Versuche des Spielers, Standard ist 1
+def spielzeit_timer(level, systemzeit):    # Berechnen der Spielzeit
+
+    spielzeit = systemzeit + int(level / 1.07)
+
+    if level >= 10: # Zeitbegrenung erst ab Level 10, unter Level 10 wird permanent True zurückgegeben
+
+        if time.time() < spielzeit:  # ist aktuelle Zeit größer als Spielzeit wird FALSE zurückgegeben, das Spiel wird beendet
+            return True
+        else:
+            return False
+    else:
+        return True
+
+
+def spiel_engine(level): # Hier läuft das Spiel, finden die Berechnungen statt
+    # anzahl versuche und Zeit abhängig von Level
+    anzahl_max_versuche = 100
+    systemzeit = time.time()
+
+    if level >= 10:
+        anzahl_max_versuche = int(level / 1.01) # Anzahl der Maximalen Versuche -> Aktuelles Level / 1.01, sofern über Level 10
 
     bereich = level * 10
     zielzahl: int = randint(1, bereich)
-    print("Neues Spiel beginnt, errate eine Zahl von 1 bis ", bereich)
 
-    while True:
-        tipp = int(input("Dein Tipp (0 für Aufgeben): "))
-        if tipp == 0:  # prüfen ob Spieler aufgeben möchte -> zurück zum Menü
-            print("")
-            print("Schade, du hast aufgegeben")
+    print("Spiel startet, rate eine Zahl zwischen 1 und {0}".format(bereich))
+
+    while spielzeit_timer(level, systemzeit):  # Zeitbegrenzung durch Spielzeit->While spielzeit_timer nicht abgelaufen(True)
+        if anzahl_max_versuche == 0:    # Prüfen ob max Versuche aufgebraucht. Ja -> Menü. Nein -> Weiterspielen
+            print("\nMaximale Anzahl der Versuche erreicht :(")
+            print("{0} wäre die richtge Zahl geewesen".format(zielzahl))
             menue(level)
             break
-
-        while tipp != zielzahl:
-            anzahl_versuche += 1
-            if tipp < zielzahl:
-                print("Die gesuchte Zahl ist größer!")
-                break
-            if tipp > zielzahl:
-                print("Die gesuchte Zahl ist kleiner!")
-                break
-        if tipp == zielzahl:
-            print("LEVEL UP, Du hast die richtige Zahl ({0}) erraten!".format(zielzahl))
-
-            if anzahl_versuche == 1:
-                print("Du hast {0} versuch gebraucht!".format(anzahl_versuche))
-            else:
-                print("Du hast {0} versuche gebraucht!".format(anzahl_versuche))
-            neues_level = level + 1
-            menue(neues_level)  # Zurück zum Menü, neues Level wird als Argument übergeben
-            break
-
-
-def level_aendern():
-    while True:
         try:
+            tipp = int(input(("Dein Tipp: (0 für Aufgeben)")))
+            if tipp == 0:
+                while True:         ############ Abfrage wirklich aufgeben, wenn ja -> zurück zu Menü. Nein -> weiterspielen
+                    abfrage = input("Wirklich aufgeben? Du verlierst dein aktuelles Level! (J/N)").upper()
+                    if abfrage == "J":
+                        level = 1
+                        menue(level)
+                    elif abfrage == "N":
+                        break
+                    else:
+                        print("Falsche Eingabe")
+                        continue    ########### Abfrage wirklich aufgeben ############
 
-            eingabe = int(input("Gewünschtes Level wählen (1-10): "))
-
-            if 1 <= eingabe <= 10:
-                changed_level: int = eingabe
-
-                return changed_level
-
+            while tipp != zielzahl:
+                if tipp < zielzahl:
+                    print("Die gesuchte Zahl ist größer")
+                    anzahl_max_versuche -= 1
+                    break
+                else:
+                    print("Die gesuchte Zahl ist kleiner")
+                    anzahl_max_versuche -= 1
+                    break
             else:
-                print("Auswahl muss zwischen 1 und 10 liegen")
-        except ValueError:
+                print("\nGlückwunsch! Du hast die richtige Zahl ({0}) erraten!".format(zielzahl))
+                level += 1
+                menue(level)
+                break
+        except ValueError: # Except für Tipp-Abfrage
             print("Falsche Eingabe")
+    else:
+        print("\nHoppla, die Zeit ist vorbei :(\n")
+        print("Anzahl übrige Versuche: ", anzahl_max_versuche)
+        print("{0} wäre die richtge Zahl geewesen".format(zielzahl))
+        menue(level)
+
+
+
+def menue(level):
+
+    while True:
+        print("------------")
+        print("(S)piel starten")
+        print("(L)evel ändern (aktuelles Level: {0})".format(level))
+        print("(B)eenden")
+        print("------------")
+
+        eingabe = input("\nEingabe: ").upper()
+
+        if eingabe == "S":
+            print("Spiel starten")
+            spiel_engine(level)
+            break
+        elif eingabe == "L":
+            print("Level ändern")
+            level_aendern(level)
+            break
+        elif eingabe == "B":
+            print("\nAuf Wiedersehen :)")
+            time.sleep(0.5)
+            break
+        else:
+            print("\nFalsche Eingabe\n")
             continue
+
+
+def level_aendern(level):# TODO: Funktion erstellen
+    pass
 
 
 main()
