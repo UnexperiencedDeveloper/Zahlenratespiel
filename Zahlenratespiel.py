@@ -26,9 +26,6 @@ def main(): # Das Spiel wird in der main() gestartet und führt nach beendigung 
     menue(level) # Zu beginn wird das Menü aufgerufen
 
 
-# über die main() wird spiele_enginge() aufgerufen
-
-
 def spielzeit_timer(level, systemzeit):    # Berechnen der Spielzeit
 
     spielzeit = systemzeit + int(level / 1.07)
@@ -103,7 +100,6 @@ def spiel_engine(level): # Hier läuft das Spiel, finden die Berechnungen statt
         print("Anzahl übrige Versuche: ", anzahl_max_versuche)
         print("{0} wäre die richtge Zahl geewesen".format(zielzahl))
         menue(level)
-
 
 
 def menue(level):
