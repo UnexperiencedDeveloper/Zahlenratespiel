@@ -55,6 +55,12 @@ def spiel_engine(level): # Hier läuft das Spiel, finden die Berechnungen statt
     zielzahl: int = randint(1, bereich)
 
     print("Spiel startet, rate eine Zahl zwischen 1 und {0}".format(bereich))
+    ansage = ["3..", "2..", "1..", "Los"]
+    for i in ansage:
+        time.sleep(1)
+        print(i)
+
+
 
     while spielzeit_timer(level, systemzeit):  # Zeitbegrenzung durch Spielzeit->While spielzeit_timer nicht abgelaufen(True)
         if anzahl_max_versuche == 0:    # Prüfen ob max Versuche aufgebraucht. Ja -> Menü. Nein -> Weiterspielen
@@ -128,8 +134,25 @@ def menue(level):
             continue
 
 
-def level_aendern(level):# TODO: Funktion erstellen
-    pass
+def level_aendern(level):
+
+
+    while True:
+        new_level = input("Level setzen (leer für Menü): ")
+        try:
+            if new_level == "":
+                print("Bitte Level eingeben")
+                continue
+            elif new_level == " ":
+                menue(level)
+                break
+            else:
+                menue(int(new_level))
+                break
+        except ValueError:
+            print("Neues Level muss eine Ganz-Zahl sein")
+            continue
+
 
 
 main()
