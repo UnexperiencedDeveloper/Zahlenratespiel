@@ -39,7 +39,7 @@ class App(tk.Frame):
         self.button = tk.Button(self, text="Los geht's!", command=self.startgame)
         self.button.grid(row=4, column=3)
 
-        self.exit_button = tk.Button(self, text="Beenden", command=self.exit) # TODO Exit funktion
+        self.exit_button = tk.Button(self, text="Beenden", command=root.destroy) # TODO Exit funktion
         self.exit_button.grid(row=4, column=4)
 
 
@@ -73,22 +73,14 @@ class App(tk.Frame):
 
     def startgame(self):
         App.zeit_abgelaufen = False
-        if App.akt_level >= 10:
-            App.spielzeit = time.time() + (App.akt_level / 1.07)
-        else:
-            App.spielzeit = time.time() + 10 # 10 Sekunden Zeit bis Level 10
+        App.spielzeit = (time.time() + 10 + App.akt_level) # Standardwert für Level 1
 
+        self.label_timer.config(fg="black")
         App.guessed_num = 0  # Reseten der Guessed Num, bei Spiel-Start
-
-        if App.akt_level >= 10:
-            App.anzahl_versuche = int(App.akt_level / 1.01)
-            self.label_trys_variable.set("Übrige versuche \n{0}".format(App.anzahl_versuche))
-        else:
-            App.anzahl_versuche = 10
-            self.label_trys_variable.set("Übrige versuche \n{0}".format(App.anzahl_versuche))
+        App.anzahl_versuche = (10 + App.akt_level)
+        self.label_trys_variable.set("Übrige versuche \n{0}".format(App.anzahl_versuche))
 
         App.zahlenbereich = (App.akt_level * 10)
-
 
         self.bereich_label_variable.set("Zahlenbereich von 1 - {0}".format(App.zahlenbereich))
 
@@ -98,6 +90,7 @@ class App(tk.Frame):
         self.timer()
         self.engine()
         self.entry.grid()
+        self.entry.focus()
 
 
 
@@ -122,7 +115,9 @@ class App(tk.Frame):
                 print("Du hast die Richtige Zahl erreicht") # TODO für Testzwecke
 
                 App.zeit_abgelaufen = True
-                App.akt_level +=1
+                App.akt_level += 1
+                App.spielzeit += 1 # Pro leveaufstieg eine Sekunde mehr
+
                 self.info_label_variable.set("Richtige Zahl erraten!\n ({0})".format(App.guessed_num))
                 self.label_level_variable.set("Aktuelles Level \n{0}".format(App.akt_level))
                 self.entry.grid_remove()
@@ -155,7 +150,7 @@ class App(tk.Frame):
         if (App.guessed_num != App.random_num and App.anzahl_versuche != 0):
             if App.spielzeit >= time.time():
 
-                self.label_timer_variable.set("{0:.3}".format((App.spielzeit - time.time())))
+                self.label_timer_variable.set("{0:.1f}".format((App.spielzeit - time.time())))
                 self.after(100, self.timer)
                 if (App.spielzeit-time.time() <= 3):
                     #Zeit rot färben
@@ -171,10 +166,9 @@ class App(tk.Frame):
 
 
 root = tk.Tk()
-
+root.title("Zahlenratespiel")
 app = App(root)
 app.pack()
-
 
 
 root.update()
