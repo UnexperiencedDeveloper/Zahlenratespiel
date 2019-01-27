@@ -10,4 +10,7 @@ The Code is mostly written with german variables, also the menu is in german.
 I already put it on my TODO-List to translate the menu.
 
 I'm not afraid of getting critic, so when you think some lines are sh*t, then pls tell me.
+
+For my own experience I made a version with GUI, too. I'm pretty happy its working,
+but there's a lot of stuff to.
 If you have a good Idea what could this little game make better, tell me :)
